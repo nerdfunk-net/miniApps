@@ -5,10 +5,57 @@ import os
 import base64
 import logging
 import re
+import getpass
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from copy import deepcopy
+
+
+def get_username_and_password(args):
+    """
+    get username and password from profile
+    Args:
+        args:
+
+    Returns:
+        username: str
+        password: str
+    """
+
+    """
+    credentials are either configured in our config
+    or must be entered by the user
+    """
+
+    username = None
+    password = None
+
+    if args.profile is not None:
+        logging.debug("using profile %s" % args.profile)
+        profile = args.profile
+        account = get_profile(onboarding_config, profile)
+        if not account['success']:
+            logging.error("could not retrieve username and password")
+        else:
+            username = account.get('username')
+            password = account.get('password')
+    if username is None:
+        username = input("Username (%s): " % getpass.getuser())
+        if username == "":
+            username = getpass.getuser()
+    elif args.username is not None:
+        username = args.username
+
+    if password is None and args.password is None:
+        password = getpass.getpass(prompt="Enter password for %s: " % username)
+    else:
+        if args.password is not None:
+            password = args.password
+
+    logging.debug("username=%s, password=%s" % (username, password))
+
+    return username, password
 
 
 def read_config(filename):

@@ -4,7 +4,6 @@ import argparse
 import sys
 import pytricia
 import yaml
-import getpass
 import socket
 import os
 import json
@@ -22,7 +21,7 @@ from onboarding import facts as facts
 from onboarding import tags as onboarding_tags
 
 # set default config file to your needs
-default_config_file = "./config.yaml"
+default_config_file = "./conf/onboarding/config.yaml"
 
 
 # this defaultdict enables us to use infinite numbers of arguments
@@ -198,52 +197,6 @@ def get_prefix_defaults(prefixe, ip):
     return defaults
 
 
-def get_username_and_password(args):
-    """
-    get username and password from profile
-    Args:
-        args:
-
-    Returns:
-        username: str
-        password: str
-    """
-
-    """
-    credentials are either configured in our config
-    or must be entered by the user
-    """
-
-    username = None
-    password = None
-
-    if args.profile is not None:
-        logging.debug("using profile %s" % args.profile)
-        profile = args.profile
-        account = helper.get_profile(onboarding_config, profile)
-        if not account['success']:
-            logging.error("could not retrieve username and password")
-        else:
-            username = account.get('username')
-            password = account.get('password')
-    if username is None:
-        username = input("Username (%s): " % getpass.getuser())
-        if username == "":
-            username = getpass.getuser()
-    elif args.username is not None:
-        username = args.username
-
-    if password is None and args.password is None:
-        password = getpass.getpass(prompt="Enter password for %s: " % username)
-    else:
-        if args.password is not None:
-            password = args.password
-
-    logging.debug("username=%s, password=%s" % (username, password))
-
-    return username, password
-
-
 def get_device_config(conn, args):
     """
         get device config
@@ -367,7 +320,7 @@ if __name__ == "__main__":
     get username and password
     """
     if args.deviceconfig is None:
-        username, password = get_username_and_password(args)
+        username, password = helper.get_username_and_password(args)
 
     # get default values of prefixes. This is needed only once
     repo = args.repo or onboarding_config['files']['prefixe']['repo']
