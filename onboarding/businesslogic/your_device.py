@@ -1,5 +1,5 @@
 import logging
-from utilities import helper
+from utilities import utilities
 
 
 def device(result, device_fqdn, raw_device_config, onboarding_config):
@@ -22,7 +22,7 @@ def device(result, device_fqdn, raw_device_config, onboarding_config):
     }
 
     logging.debug("adding userdefined tags of %s to sot" % device_fqdn)
-    result[device_fqdn]['user_based_device_tags'] = helper.send_request("updatedevice",
+    result[device_fqdn]['user_based_device_tags'] = utilities.send_request("updatedevice",
                                                                         onboarding_config["sot"]["api_endpoint"],
                                                                         data_set_primary)
     """

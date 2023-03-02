@@ -1,6 +1,6 @@
 import logging
 from businesslogic import your_interfaces as user_int
-from utilities import helper
+from utilities import utilities
 
 
 def to_sot(result, args, device_fqdn, primary_defaults, ciscoconf, onboarding_config):
@@ -131,7 +131,7 @@ def add_interface(result, args, device_fqdn, primary_defaults, ciscoconf, name, 
         data_add_interface['config'].update({'tags': tag_list})
 
     logging.debug("adding %s / %s to sot" % (device_fqdn, name))
-    result[device_fqdn][name] = helper.send_request("interface",
+    result[device_fqdn][name] = utilities.send_request("interface",
                                                     onboarding_config["sot"]["api_endpoint"],
                                                     data_add_interface)
 
@@ -144,7 +144,7 @@ def add_interface(result, args, device_fqdn, primary_defaults, ciscoconf, name, 
             "address": addr
         }
         logging.debug("adding %s / %s to sot" % (device_fqdn, addr))
-        result[device_fqdn][name][addr] = helper.send_request("addaddress",
+        result[device_fqdn][name][addr] = utilities.send_request("addaddress",
                                                               onboarding_config["sot"]["api_endpoint"],
                                                               data_add_address)
 
@@ -163,7 +163,7 @@ def vlans(result, device_fqdn, args, ciscoconf, primary_defaults, onboarding_con
             "site": args.site or primary_defaults['site']
         }
         logging.debug("adding vlan %s of %s to sot" % (vid, device_fqdn))
-        result[device_fqdn]['vlan'][vid] = helper.send_request("addvlan",
+        result[device_fqdn]['vlan'][vid] = utilities.send_request("addvlan",
                                                                onboarding_config["sot"]["api_endpoint"],
                                                                data_add_vlan)
         # create list of vlans added to the sot
@@ -180,7 +180,7 @@ def vlans(result, device_fqdn, args, ciscoconf, primary_defaults, onboarding_con
                 "site": args.site or primary_defaults['site']
             }
             logging.debug("adding vlan %s of %s to sot" % (vid, device_fqdn))
-            result[device_fqdn]['vlan'][vid] = helper.send_request("addvlan",
+            result[device_fqdn]['vlan'][vid] = utilities.send_request("addvlan",
                                                                    onboarding_config["sot"]["api_endpoint"],
                                                                    data_add_vlan)
 

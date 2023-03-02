@@ -4,11 +4,7 @@ import yaml
 import logging
 import os
 import glob
-import requests
-import json
-from collections import defaultdict
-from utilities import helper
-from businesslogic import your_config_context as user_cc
+from utilities import utilities
 
 
 def to_sot(result, device_fqdn, ciscoconf, raw_device_config, device_defaults, onboarding_config):
@@ -81,7 +77,7 @@ def add_tag_to_sot(tag, device_fqdn, key, onboarding_config):
                 'interface': key,
                 'tag': tag['name']
             }
-            helper.send_request("add_tag_to_interface",
+            utilities.send_request("add_tag_to_interface",
                                 onboarding_config["sot"]["api_endpoint"],
                                 sot_tag)
         if scope == "dcim.device":
@@ -89,7 +85,7 @@ def add_tag_to_sot(tag, device_fqdn, key, onboarding_config):
                 'name': device_fqdn,
                 'tag': tag['name']
             }
-            helper.send_request("add_tag_to_device",
+            utilities.send_request("add_tag_to_device",
                                 onboarding_config["sot"]["api_endpoint"],
                                 sot_tag)
 
@@ -134,5 +130,5 @@ def parse_config(device_config, device_fqdn, config, onboarding_config):
 
     if list_of_list:
         for block in dc:
-            data = helper.get_values_from_config_block(block, config['patterns'], config['named_groups'])
+            data = utilities.get_values_from_config_block(block, config['patterns'], config['named_groups'])
 

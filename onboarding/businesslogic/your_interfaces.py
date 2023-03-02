@@ -1,5 +1,5 @@
 import logging
-from utilities import helper
+from utilities import utilities
 
 
 def interface_tags(result, device_fqdn, interface_name, interface_config, onboarding_config):
@@ -42,7 +42,7 @@ def interface_tags(result, device_fqdn, interface_name, interface_config, onboar
     if interface_name not in result[device_fqdn]:
         result[device_fqdn][interface_name] = {}
 
-    result[device_fqdn][interface_name]['userbased_interface_tags'] = helper.send_request("updateinterface",
+    result[device_fqdn][interface_name]['userbased_interface_tags'] = utilities.send_request("updateinterface",
                                                             onboarding_config["sot"]["api_endpoint"],
                                                             newconfig)
 

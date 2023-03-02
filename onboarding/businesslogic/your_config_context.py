@@ -1,5 +1,5 @@
 from collections import defaultdict
-from utilities import helper
+from utilities import utilities
 
 
 def config_context(result, device_fqdn, device_context, sot_device_context, raw_device_config, onboarding_config):
@@ -31,7 +31,7 @@ def config_context(result, device_fqdn, device_context, sot_device_context, raw_
         "config": config
     }
 
-    result[device_fqdn]['config_context'] = helper.send_request("editfile",
+    result[device_fqdn]['config_context'] = utilities.send_request("editfile",
                                                                 onboarding_config["sot"]["api_endpoint"],
                                                                 newconfig)
     """

@@ -10,7 +10,7 @@ import json
 import logging
 from dotenv import load_dotenv, dotenv_values
 from utilities.ciscoconfig import DeviceConfig
-from utilities import helper
+from utilities import utilities
 from utilities import devicemanagement as dm
 from collections import defaultdict
 from onboarding import interfaces as onboarding_interfaces
@@ -291,10 +291,10 @@ if __name__ == "__main__":
         config_file = args.config
     else:
         config_file = default_config_file
-    onboarding_config = helper.read_config(config_file)
+    onboarding_config = utilities.read_config(config_file)
 
     # set logging
-    cfg_loglevel = helper.get_value_from_dict(onboarding_config, ['onboarding','logging','level'])
+    cfg_loglevel = utilities.get_value_from_dict(onboarding_config, ['onboarding','logging','level'])
     if cfg_loglevel == 'debug':
         loglevel = logging.DEBUG
     elif cfg_loglevel == 'info':
@@ -307,10 +307,10 @@ if __name__ == "__main__":
         loglevel = 100
     else:
         loglevel = logging.NOTSET
-    log_format = helper.get_value_from_dict(onboarding_config, ['onboarding','logging','format'])
+    log_format = utilities.get_value_from_dict(onboarding_config, ['onboarding','logging','format'])
     if log_format is None:
         log_format = '%(asctime)s %(levelname)s:%(message)s'
-    logfile = helper.get_value_from_dict(onboarding_config, ['onboarding','logging','filename'])
+    logfile = utilities.get_value_from_dict(onboarding_config, ['onboarding','logging','filename'])
     logging.basicConfig(level=loglevel,
                         format=log_format,
                         filename=logfile)
@@ -320,13 +320,13 @@ if __name__ == "__main__":
     get username and password
     """
     if args.deviceconfig is None:
-        username, password = helper.get_username_and_password(args)
+        username, password = utilities.get_username_and_password(args)
 
     # get default values of prefixes. This is needed only once
     repo = args.repo or onboarding_config['files']['prefixe']['repo']
     filename = args.prefixe or onboarding_config['files']['prefixe']['filename']
     logging.debug("reading %s from %s" % (filename, repo))
-    prefixe_str = helper.get_file(onboarding_config["sot"]["api_endpoint"], repo, filename)
+    prefixe_str = utilities.get_file(onboarding_config["sot"]["api_endpoint"], repo, filename)
     if prefixe_str is None:
         logging.error("could not load prefixe.")
         print("could not load prefixe.")
@@ -458,7 +458,7 @@ if __name__ == "__main__":
                                      onboarding_config)
             conn.close()
 
-    target = helper.get_value_from_dict(onboarding_config,
+    target = utilities.get_value_from_dict(onboarding_config,
                                         ['onboarding','logging','result'])
     if target == 'stdout':
         if result:

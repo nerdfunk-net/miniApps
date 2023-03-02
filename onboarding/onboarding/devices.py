@@ -1,6 +1,6 @@
 import logging
 from businesslogic import your_device as user_bc_device
-from utilities import helper
+from utilities import utilities
 
 
 def to_sot(result, args, device_fqdn, device_facts, raw_device_config, primary_defaults, onboarding_config):
@@ -37,7 +37,7 @@ def to_sot(result, args, device_fqdn, device_facts, raw_device_config, primary_d
     }
     # send_request is our helper function to call the network abstraction layer
     logging.debug("adding device %s (%s) to sot" % (device_fqdn, device_type))
-    result[device_fqdn]['device'] = helper.send_request("device",
+    result[device_fqdn]['device'] = utilities.send_request("device",
                                                         onboarding_config["sot"]["api_endpoint"],
                                                         data_add_device)
 
@@ -74,7 +74,7 @@ def primary_ip(result, device_fqdn, primary_address, ciscoconf, onboarding_confi
             "config": new_addr
         }
         logging.debug("setting primary IP of %s to %s in sot" % (device_fqdn, primary_address))
-        result[device_fqdn]['primary_ip'] = helper.send_request("updatedevice",
+        result[device_fqdn]['primary_ip'] = utilities.send_request("updatedevice",
                                                                 onboarding_config["sot"]["api_endpoint"],
                                                                 data_set_primary)
     else:
@@ -96,7 +96,7 @@ def backup_config(result, device_fqdn, raw_device_config, onboarding_config):
         "config": config
     }
 
-    result[device_fqdn]['backup'] = helper.send_request("editfile",
+    result[device_fqdn]['backup'] = utilities.send_request("editfile",
                                                         onboarding_config["sot"]["api_endpoint"],
                                                         newconfig)
 

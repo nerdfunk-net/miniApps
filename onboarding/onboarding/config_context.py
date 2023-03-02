@@ -7,7 +7,7 @@ import glob
 import jinja2
 import re
 from collections import defaultdict
-from utilities import helper
+from utilities import utilities
 from businesslogic import your_config_context as user_cc
 
 
@@ -77,7 +77,7 @@ def to_sot(result, device_fqdn, ciscoconf, raw_device_config, device_defaults, o
     }
 
     logging.debug("writing config_context to sot")
-    response = helper.send_request("editfile",
+    response = utilities.send_request("editfile",
                                    onboarding_config["sot"]["api_endpoint"],
                                    newconfig)
 
@@ -234,7 +234,7 @@ def parse_config(device_config, config):
             # we have a "named" dict like a list of the interfaces
             for dc_dict in device_config:
                 for key, value in dc_dict.items():
-                    data = helper.get_values_from_config_block(value,
+                    data = utilities.get_values_from_config_block(value,
                                                                config['patterns'],
                                                                config['named_groups'],
                                                                key)
@@ -246,7 +246,7 @@ def parse_config(device_config, config):
 
     if list_of_list:
         for block in dc:
-            data = helper.get_values_from_config_block(block, config['patterns'], config['named_groups'])
+            data = utilities.get_values_from_config_block(block, config['patterns'], config['named_groups'])
             if data is not None:
                 response.append(data)
 
@@ -273,7 +273,7 @@ def transform_data(config_values, config):
     except Exception as exc:
         logging.error("could not load spec for transformation. Got %s" % exc)
         return config_values
-    return helper.modify_dict(spec, config_values)
+    return utilities.modify_dict(spec, config_values)
 
 
 def group_device_config(device_config, config, group_pattern, group_by, remove_from_config):
