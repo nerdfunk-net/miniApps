@@ -1,0 +1,18 @@
+---
+active: True
+name: Cisco based cdp neighbors
+vendor: cisco
+cables:
+  - command:
+      cmd: show cdp neighbors detail
+      mapping:
+        - src: DESTINATION_HOST
+          dst: side_b
+        - src: LOCAL_PORT
+          dst: local
+        - src: REMOTE_PORT
+          dst: remote
+      template:
+        ios: cisco_ios_show_cdp_neighbors_detail.textfsm
+        nxos: cisco_nxos_show_cdp_neighbors_detail.textfsm
+

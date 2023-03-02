@@ -1,0 +1,39 @@
+---
+active: False
+name: interfaces
+platform: nxos
+source:
+  object: ^interface
+  name_pattern: ^interface\s+(?P<INTERFACE>(\S+))$
+  name_group: INTERFACE
+named_groups:
+  HSRP: '(?P<HSRP>(\d+))'
+  VERSION: '(?P<VERSION>(\d+))'
+  PRIO: '(?P<PRIO>(\d+))'
+  AUTH: '(?P<AUTH>(\S+))'
+  IPV4: '(?P<IPV4>(\d+\.\d+\.\d+\.\d+))'
+patterns:
+    - name: version
+      pattern: ^\s+hsrp version (VERSION)
+    - name: standby
+      pattern: ^\s+hsrp (HSRP)
+    - name: priority
+      pattern: ^\s+priority (PRIO)
+    - name: preempt
+      pattern: ^\s+preempt
+    - name: auth
+      pattern: ^\s+authentication md5 key-string (AUTH)
+    - name: ip
+      pattern: ^\s+ip (IPV4)
+template: |2
+  {"hsrp": {
+   {% for hsrp in values %}
+   "{{ hsrp["__name__"] }}": {
+     "ip": "{{ hsrp["ip"] }}",
+     "standby": {{ hsrp["standby"] }},
+     "version": {{ hsrp["version"] }}
+     {% if "priority" in hsrp %},"priority": {{ hsrp["priority"] }}{% endif %}
+     {% if "auth" in hsrp %},"auth": "{{ hsrp["auth"] }}"{% endif %}
+   } {{ ", " if not loop.last else "" }}
+   {% endfor %}
+  }}

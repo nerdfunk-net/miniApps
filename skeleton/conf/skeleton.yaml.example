@@ -1,0 +1,22 @@
+---
+# default logins to connect to the devices
+# these accounts are not stored in nautobot
+accounts:
+    devices:
+        # profile name
+        default:
+            # username to login to devices
+            username: username
+            # encrypted and base64 encodes password
+            password: "password_in_base64"
+skeleton:
+  logging:
+    # set loglevel to your need (debug, info, error, critical)
+    level: info
+    format: "%(levelname)s - %(message)s"
+    # use filename to write logging to a file
+    # filename: out.log
+    # if you want to write the result to a file use result: "filename" instead
+    result: stdout
+sot:
+  api_endpoint: "http://127.0.0.1:8000"

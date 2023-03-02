@@ -1,0 +1,19 @@
+---
+index:
+  - pattern: sh([ow]+)? cdp ne([ighbors]+)? de([tail]+)?
+    command: show cdp neighbors detail
+    template:
+      ios: cisco_ios_show_cdp_neighbors_detail.textfsm
+      nxos: cisco_nxos_show_cdp_neighbors_detail.textfsm
+  - pattern: sh([ow]+)? ip int([erface]+)? br([ief]+)?
+    command: show ip interface brief
+    output: table
+    template:
+      ios: cisco_ios_show_ip_interface_brief.textfsm
+      nxos: cisco_nxos_show_ip_interface_brief.textfsm
+  - pattern: sh([ow]+)? ver([sion]+)?
+    command: show version
+    output: yaml
+    template:
+      ios: cisco_ios_show_version.textfsm
+      nxos: cisco_nxos_show_version.textfsm

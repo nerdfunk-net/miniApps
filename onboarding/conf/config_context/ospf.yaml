@@ -1,0 +1,54 @@
+---
+active: False
+name: ospf
+source:
+  regex: (router ospf.*?!)
+named_groups:
+  IPV4: '(?P<IPV4>(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))'
+  MASK: '(?P<MASK>(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))'
+  AREA:  '(?P<AREA>(\d+))'
+  WORD: '(?P<WORD>(\w+))'
+  INT:  '(?P<INT>(\d+))'
+  TIMER1:  '(?P<TIMER1>(\d+))'
+  TIMER2:  '(?P<TIMER2>(\d+))'
+  TIMER3:  '(?P<TIMER3>(\d+))'
+patterns:
+    - name: network
+      pattern: ^ network (IPV4) (MASK) area (AREA)
+      type: list
+    - name: rid
+      pattern: ^router ospf (INT)
+    - name: router-id
+      pattern: ^ router-id (IPV4)
+    - name: log-adjacency-changes
+      pattern: ^ log-adjacency-changes (WORD)
+    - name: reference-bandwidth
+      pattern: ^ auto-cost reference-bandwidth (INT)
+    - name: timers-lsa-arrival
+      pattern: ^ timers lsa arrival (INT)
+    - name: timers-spf
+      pattern: ^ timers throttle spf (TIMER1) (TIMER2) (TIMER3)
+    - name: timers-lsa
+      pattern: ^ timers throttle lsa (TIMER1) (TIMER2) (TIMER3)
+template: |2
+  {"ospf_routing": [
+  {% for ospf in values %}
+  {
+    "rid": {{ ospf["rid"] }},
+    "router-id": "{{ ospf["router-id"] }}",
+    "timers": {
+       {% if 'timers-spf' in ospf -%}
+       "spf": "{{ ospf['timers-spf']['TIMER1'] }} {{ ospf['timers-spf']['TIMER2'] }} {{ ospf['timers-spf']['TIMER3'] }}"
+       {%- if 'timers-lsa' in ospf -%},{%- endif -%}
+       {%- endif -%}
+       {%- if 'timers-lsa' in ospf -%}
+       "lsa": "{{ ospf['timers-lsa']['TIMER1'] }} {{ ospf['timers-lsa']['TIMER2'] }} {{ ospf['timers-lsa']['TIMER3'] }}"
+       {%- endif -%}
+    },
+    "networks":[
+    {% for network in ospf['network'] -%}
+      {"net":"{{network["IPV4"] }}","mask":"{{ network["MASK"] }}","area":"{{ network["AREA"] }}"}{{ ", " if not loop.last else "" }}
+    {% endfor -%}] 
+  } {{ ", " if not loop.last else "" }}
+  {% endfor -%}
+  ]}

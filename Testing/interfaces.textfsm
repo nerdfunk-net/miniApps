@@ -1,0 +1,24 @@
+Value Required INTERFACE (\S+)
+Value DESCRIPTION (.+)
+Value CIDR (\d+\.\d+\.\d+\.\d+/\d+)
+Value IPV4 (\d+\.\d+\.\d+\.\d+)
+Value List HSRP_ID (\d+)
+Value List HSRP_IPV4 (\d+\.\d+\.\d+\.\d+)
+Value List HSRP_KEY (\S+)
+
+Start
+ ^interface ${INTERFACE} -> Interface
+
+Interface
+ ^interface -> Continue.Record
+ ^\s+hsrp -> Hsrp
+ ^interface ${INTERFACE}
+ ^\s+description\s${DESCRIPTION}
+ ^\s+ip address\s${CIDR}
+ ^\s+ip address\s${IPV4}
+
+Hsrp
+ ^\s+hsrp ${HSRP_ID}
+ ^\s+authentication md5 key-string ${HSRP_KEY}
+ ^\s+ip ${HSRP_IPV4}
+ ^. -> Interface

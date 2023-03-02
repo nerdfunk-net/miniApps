@@ -1,0 +1,13 @@
+---
+active: False
+name: interfaces
+platform: ios
+source:
+  regex: ^interface\s(?P<INTERFACE>(\S+)$).*?!
+tags:
+  - name: ospf
+    pattern: ip ospf
+    scope: dcim.interface
+  - name: test
+    pattern: ^ speed auto
+    scope: dcim.interface

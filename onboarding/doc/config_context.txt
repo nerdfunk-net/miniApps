@@ -1,0 +1,348 @@
+The data looks like this:
+
+** ospf: **
+
+[
+    [
+        "router ospf 100",
+        " router-id 192.168.0.1",
+        " passive-interface default",
+        " no passive-interface GigabitEthernet0/1",
+        " network 192.168.0.1 0.0.0.0 area 0",
+        "!"
+    ],
+    [
+        "router ospf 200",
+        " router-id 192.168.0.2",
+        " passive-interface default",
+        " no passive-interface GigabitEthernet0/1",
+        " network 10.0.0.1 0.0.0.0 area 0",
+        "!"
+    ]
+]
+
+
+After parsing:
+
+[
+    {
+        "network": [
+            {
+                "IPV4": "192.168.0.1",
+                "MASK": "0.0.0.0",
+                "AREA": "0"
+            }
+        ],
+        "rid": "100",
+        "router-id": "192.168.0.1"
+    },
+    {
+        "network": [
+            {
+                "IPV4": "10.0.0.1",
+                "MASK": "0.0.0.0",
+                "AREA": "0"
+            }
+        ],
+        "rid": "200",
+        "router-id": "192.168.0.2"
+    }
+]
+
+After transform
+
+[
+    {
+        "network": [
+            {
+                "IPV4": "192.168.0.1",
+                "MASK": "0.0.0.0",
+                "AREA": "0"
+            }
+        ],
+        "rid": "100",
+        "router-id": "192.168.0.1"
+    },
+    {
+        "network": [
+            {
+                "IPV4": "10.0.0.1",
+                "MASK": "0.0.0.0",
+                "AREA": "0"
+            }
+        ],
+        "rid": "200",
+        "router-id": "192.168.0.2"
+    }
+]
+
+config_context:
+
+        "ospf": {
+            "ospf_routing": [
+                {
+                    "rid": 100,
+                    "router-id": "192.168.0.1",
+                    "timers": {},
+                    "networks": [
+                        {
+                            "net": "192.168.0.1",
+                            "mask": "0.0.0.0",
+                            "area": "0"
+                        }
+                    ]
+                },
+                {
+                    "rid": 200,
+                    "router-id": "192.168.0.2",
+                    "timers": {},
+                    "networks": [
+                        {
+                            "net": "10.0.0.1",
+                            "mask": "0.0.0.0",
+                            "area": "0"
+                        }
+                    ]
+                }
+            ]
+        }
+
+** static_routing: **
+
+[
+    "ip route 0.0.0.0 0.0.0.0 192.168.1.1",
+    "ip route 10.10.10.0 255.255.255.0 4.3.2.1",
+    "ip route 20.10.10.0 255.255.255.0 4.3.2.1"
+]
+
+After parsing:
+
+[
+    {
+        "route": [
+            {
+                "NET": "0.0.0.0",
+                "MASK": "0.0.0.0",
+                "NEXTHOP": "192.168.1.1"
+            },
+            {
+                "NET": "10.10.10.0",
+                "MASK": "255.255.255.0",
+                "NEXTHOP": "4.3.2.1"
+            },
+            {
+                "NET": "20.10.10.0",
+                "MASK": "255.255.255.0",
+                "NEXTHOP": "4.3.2.1"
+            }
+        ]
+    }
+]
+
+
+After transform
+
+[
+    {
+        "route": [
+            {
+                "NET": "0.0.0.0",
+                "MASK": "0.0.0.0",
+                "NEXTHOP": "192.168.1.1"
+            },
+            {
+                "NET": "10.10.10.0",
+                "MASK": "255.255.255.0",
+                "NEXTHOP": "4.3.2.1"
+            },
+            {
+                "NET": "20.10.10.0",
+                "MASK": "255.255.255.0",
+                "NEXTHOP": "4.3.2.1"
+            }
+        ]
+    }
+]
+
+
+device context:
+
+ "static_routing": [
+            {
+                "net": "0.0.0.0",
+                "mask": "0.0.0.0",
+                "nexthop": "192.168.1.1"
+            },
+            {
+                "net": "10.10.10.0",
+                "mask": "255.255.255.0",
+                "nexthop": "4.3.2.1"
+            },
+            {
+                "net": "20.10.10.0",
+                "mask": "255.255.255.0",
+                "nexthop": "4.3.2.1"
+            }
+        ]
+
+** hsrp **
+
+[
+    [
+        "interface GigabitEthernet0/0",
+        " ip address dhcp",
+        " duplex auto",
+        " speed auto",
+        " media-type rj45",
+        "!"
+    ],
+    [
+        "interface GigabitEthernet0/3",
+        " ip address 10.10.10.1 255.255.255.0",
+        " standby version 2",
+        " standby 1 ip 10.10.10.10",
+        " standby 1 priority 90",
+        " standby 1 preempt",
+        " standby 1 authentication test",
+        " standby 2 ip 10.10.10.100",
+        " standby 2 priority 110",
+        " standby 2 preempt",
+        " standby 2 authentication test2",
+        " shutdown",
+        " duplex auto",
+        " speed auto",
+        " media-type rj45",
+        "!"
+    ]
+]
+
+After parsing
+
+[
+    {
+        "version": "2",
+        "ip": {
+            "STANDBY": "2",
+            "IPV4": "10.10.10.1"
+        },
+        "priority": {
+            "STANDBY": "2",
+            "PRIO": "110"
+        },
+        "preempt": "2",
+        "auth": {
+            "STANDBY": "2",
+            "AUTH": "test2"
+        }
+    }
+]
+
+After transform:
+
+[
+    {
+        "version": "2",
+        "standby": "2",
+        "priority": "110",
+        "preempt": "2",
+        "auth": "test2"
+    }
+]
+
+config_context
+
+{
+    "lab.local": {
+        "interfaces": {
+            "hsrp": [
+                {
+                    "standby": 2,
+                    "version": 2,
+                    "priority": 110,
+                    "auth": "test2"
+                }
+            ]
+        }
+    }
+}
+
+** bgp **
+
+after grouping
+
+[
+    [
+        " neighbor 2.2.2.2 remote-as 65020",
+        " neighbor 2.2.2.2 transport path-mtu-discovery",
+        " neighbor 2.2.2.2 ebgp-multihop 255",
+        " neighbor 2.2.2.2 default-originate"
+    ],
+    [
+        " neighbor 1.1.1.1 remote-as 65010",
+        " neighbor 1.1.1.1 transport path-mtu-discovery",
+        " neighbor 1.1.1.1 ebgp-multihop 255",
+        " neighbor 1.1.1.1 default-originate"
+    ]
+]
+
+After parsing:
+
+[
+    {
+        "remoteas": {
+            "NEIGHBOR": "2.2.2.2",
+            "REMOTEAS": "65020"
+        },
+        "transport": {
+            "NEIGHBOR": "2.2.2.2",
+            "TRANSPORT": "path-mtu-discovery"
+        },
+        "multihop": {
+            "NEIGHBOR": "2.2.2.2",
+            "MULTIHOP": "255"
+        },
+        "default-originate": "2.2.2.2"
+    },
+    {
+        "remoteas": {
+            "NEIGHBOR": "1.1.1.1",
+            "REMOTEAS": "65010"
+        },
+        "transport": {
+            "NEIGHBOR": "1.1.1.1",
+            "TRANSPORT": "path-mtu-discovery"
+        },
+        "multihop": {
+            "NEIGHBOR": "1.1.1.1",
+            "MULTIHOP": "255"
+        },
+        "default-originate": "1.1.1.1"
+    }
+]
+
+After transform
+
+{
+    "grouped": [
+        {
+            "remoteas": "65020",
+            "neighbor": "2.2.2.2",
+            "multihop": "255",
+            "transport": "path-mtu-discovery"
+        },
+        {
+            "remoteas": "65010",
+            "neighbor": "1.1.1.1",
+            "multihop": "255",
+            "transport": "path-mtu-discovery"
+        }
+    ],
+    "cleared": [
+        "router bgp 65000",
+        " bgp log-neighbor-changes",
+        "!"
+    ]
+}
+
+
+

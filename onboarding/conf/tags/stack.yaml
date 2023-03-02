@@ -1,0 +1,10 @@
+---
+active: True
+name: stack
+platform: ios
+source:
+  fullconfig: true
+tags:
+  - name: ospf
+    pattern: redundancy
+    scope: dcim.device

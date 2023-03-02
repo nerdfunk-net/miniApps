@@ -1,0 +1,39 @@
+---
+active: False
+name: interfaces
+platform: ios
+source:
+  regex: ^interface\s(?P<INTERFACE>(\S+)$).*?!
+named_groups:
+  STANDBY: '(?P<STANDBY>(\d+))'
+  VERSION: '(?P<VERSION>(\d+))'
+  PRIO: '(?P<PRIO>(\d+))'
+  AUTH: '(?P<AUTH>(\S+))'
+  IPV4: '(?P<IPV4>(\d+\.\d+\.\d+\.\d+))'
+patterns:
+    - name: version
+      pattern: ^ standby version (VERSION)
+    - name: ip
+      pattern: ^ standby (STANDBY) ip (IPV4)
+      key: values
+    - name: priority
+      pattern: ^ standby (STANDBY) priority (PRIO)
+      key: values
+    - name: preempt
+      pattern: ^ standby (STANDBY) preempt
+      key: values
+    - name: auth
+      pattern: ^ standby (STANDBY) authentication (AUTH)
+      key: values
+template: |2
+  {"hsrp": [
+   {% for hsrp in values %}
+   {
+    "interface": "{{ hsrp["__name__"] }}", 
+    "standby": {{ hsrp["values"]["STANDBY"] }},
+    "version": {{ hsrp["version"] }},
+    "priority": {{ hsrp["values"]["PRIO"] }},
+    "auth": "{{ hsrp["values"]["AUTH"] }}"
+   } {{ ", " if not loop.last else "" }}
+   {% endfor %}
+  ]}

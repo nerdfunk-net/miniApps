@@ -1,0 +1,26 @@
+---
+active: False
+name: spanning-tree
+source:
+  section: spanning-tree
+named_groups:
+  CONFIG: '(?P<CONFIG>(.*?))$'
+  MODE: '(?P<MODE>(\S+))$'
+  VLAN: '(?P<VLAN>(\d+))'
+  PRIO: '(?P<PRIO>(\d+))'
+patterns:
+  - name: mode
+    pattern: ^spanning-tree mode (MODE)
+  - name: config
+    pattern: ^spanning-tree (CONFIG)
+    type: list
+  - name: bpduguard
+    pattern: ^spanning-tree portfast edge bpduguard default
+  - name: priority
+    pattern: ^spanning-tree vlan (VLAN) priority (PRIO)
+template: |2
+  [
+    {%- for stp in values[0]["config"] %}
+      "{{stp["CONFIG"]}}"{{ ", " if not loop.last else "" }}
+    {%- endfor %}
+  ]

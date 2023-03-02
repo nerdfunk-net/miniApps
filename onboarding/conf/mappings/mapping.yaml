@@ -1,0 +1,8 @@
+---
+interfaces:
+  Loopback: virtual
+  vlan: virtual
+  GigabitEthernet: 1000base-t
+  TenGigabit: 10gbase-t
+  Port-channel: lag
+  default: other

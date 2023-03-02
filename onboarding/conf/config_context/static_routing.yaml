@@ -1,0 +1,19 @@
+---
+active: False
+name: static_routing
+source:
+  section: ip route
+named_groups:
+  NET: '(?P<NET>(\S+))'
+  MASK: '(?P<MASK>(\S+))'
+  NEXTHOP: '(?P<NEXTHOP>(\S+))'
+patterns:
+    - name: route
+      pattern: ^ip route (NET) (MASK) (NEXTHOP)
+      type: list
+template: |2
+  [
+  {% for route in values[0]["route"] -%}
+  {"net":"{{route["NET"] }}","mask":"{{ route["MASK"] }}","nexthop":"{{ route["NEXTHOP"] }}"}{{ ", " if not loop.last else "" }}
+  {% endfor -%}
+  ]

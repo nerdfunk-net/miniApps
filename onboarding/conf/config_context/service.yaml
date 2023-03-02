@@ -1,0 +1,17 @@
+---
+active: False
+name: service
+source:
+  section: service
+named_groups:
+  SERVICE: '(?P<SERVICE>(.*?))$'
+patterns:
+  - name: service
+    pattern: ^service (SERVICE)
+    type: list
+template: |2
+  [
+    {%- for service in values[0]["service"] %}
+      "{{service["SERVICE"]}}"{{ ", " if not loop.last else "" }}
+    {%- endfor %}
+  ]
