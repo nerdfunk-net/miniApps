@@ -261,10 +261,10 @@ if __name__ == "__main__":
         filter = ""
     devices = dm.get_devices(backup_config["sot"]["api_endpoint"], filter)
     device_list =[]
-    for device in devices["devices"]:
-        device_list.append({'host_ip': device["primary_ip4"]["address"].split("/")[0],
-                            'hostname': device["hostname"],
-                            'platform': device["platform"]["slug"]})
+    for device in devices["result"]:
+        device_list.append({'host_ip': device["primary_ip4_for"]["primary_ip4"]["address"].split("/")[0],
+                            'hostname': device["primary_ip4_for"]["hostname"],
+                            'platform': device["primary_ip4_for"]["platform"]["slug"]})
 
     # set number of parallel tasks
     if 'threads' in backup_config['backup']:
@@ -298,5 +298,5 @@ if __name__ == "__main__":
         'startup_config': args.startup_config
     })
 
-    #print(params)
+    # print(params)
     asyncio.run(main(device_list, params))
