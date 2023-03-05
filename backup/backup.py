@@ -261,7 +261,7 @@ if __name__ == "__main__":
         filter = ""
     devices = dm.get_devices(backup_config["sot"]["api_endpoint"], filter)
     device_list =[]
-    for device in devices["result"]:
+    for device in devices["result"]["ip_addresses"]:
         device_list.append({'host_ip': device["primary_ip4_for"]["primary_ip4"]["address"].split("/")[0],
                             'hostname': device["primary_ip4_for"]["hostname"],
                             'platform': device["primary_ip4_for"]["platform"]["slug"]})

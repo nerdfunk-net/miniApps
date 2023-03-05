@@ -70,7 +70,7 @@ def get_devices(api_endpoint, filter=""):
     #
     # please note: check config.yaml and check if a // is not part of the URL!
     #
-    url_request = "%s/get/device/ip/%s" % (api_endpoint, filter)
+    url_request = "%s/get/devices/ip/%s" % (api_endpoint, filter)
     print(url_request)
     r = requests.get(url=url_request)
 
