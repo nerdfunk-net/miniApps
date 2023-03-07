@@ -66,11 +66,11 @@ def get_config(conn, configtype: str) -> str:
     return response.result
 
 
-def get_devices(api_endpoint, filter=""):
+def get_devices(api_endpoint, filter="", schema="devices/ip"):
     #
     # please note: check config.yaml and check if a // is not part of the URL!
     #
-    url_request = "%s/get/devices/ip/%s" % (api_endpoint, filter)
+    url_request = "%s/get/%s?%s" % (api_endpoint, schema, filter)
     print(url_request)
     r = requests.get(url=url_request)
 

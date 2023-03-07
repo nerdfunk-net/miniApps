@@ -320,7 +320,7 @@ if __name__ == "__main__":
     get username and password
     """
     if args.deviceconfig is None:
-        username, password = utilities.get_username_and_password(args)
+        username, password = utilities.get_username_and_password(args, onboarding_config)
 
     # get default values of prefixes. This is needed only once
     repo = args.repo or onboarding_config['files']['prefixe']['repo']

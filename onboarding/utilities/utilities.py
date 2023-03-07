@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from copy import deepcopy
 
 
-def get_username_and_password(args):
+def get_username_and_password(args, onboarding_config):
     """
     get username and password from profile
     Args:

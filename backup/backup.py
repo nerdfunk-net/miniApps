@@ -196,13 +196,15 @@ if __name__ == "__main__":
 
     # defaults
     params = {}
+    device_list = []
 
     parser = argparse.ArgumentParser()
     # what to do
-    parser.add_argument('--device', type=str, required=False)
-    parser.add_argument('--filter', type=str, required=False)
     parser.add_argument('--no-running-config', action='store_false')
     parser.add_argument('--startup-config', action='store_true')
+    #
+    # which devices to backup
+    parser.add_argument('--devices', type=str, required=True)
     # where to save
     parser.add_argument('--directory', type=str, required=False)
     parser.add_argument('--repo', type=str, required=False)
@@ -255,16 +257,22 @@ if __name__ == "__main__":
     # get username and password
     username, password = get_username_and_password(args)
 
-    if args.filter is not None:
-        filter = "/?%s" % args.filter
-    else:
-        filter = ""
-    devices = dm.get_devices(backup_config["sot"]["api_endpoint"], filter)
-    device_list =[]
-    for device in devices["result"]["ip_addresses"]:
-        device_list.append({'host_ip': device["primary_ip4_for"]["primary_ip4"]["address"].split("/")[0],
-                            'hostname': device["primary_ip4_for"]["hostname"],
-                            'platform': device["primary_ip4_for"]["platform"]["slug"]})
+    if args.devices is not None:
+        if 'cidr' in args.devices:
+            devices = dm.get_devices(backup_config["sot"]["api_endpoint"], args.devices)
+            for device in devices["result"]["ip_addresses"]:
+                device_list.append({'host_ip': device["primary_ip4_for"]["primary_ip4"]["address"].split("/")[0],
+                                    'hostname': device["primary_ip4_for"]["hostname"],
+                                    'platform': device["primary_ip4_for"]["platform"]["slug"]})
+        else:
+            devices = dm.get_devices(backup_config["sot"]["api_endpoint"], args.devices)
+            for device in devices["result"]["devices"]:
+                device_list.append({'host_ip': device["primary_ip4"]["address"].split("/")[0],
+                                    'hostname': device["hostname"],
+                                    'platform': device["platform"]["slug"]})
+
+
+    # print(json.dumps(device_list, indent=4))
 
     # set number of parallel tasks
     if 'threads' in backup_config['backup']:

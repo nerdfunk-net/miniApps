@@ -20,53 +20,55 @@ no_choices = ['no', 'n']
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--password', type=str, required=False)
-parser.add_argument('--salt', type=bool, default=False, required=False)
-parser.add_argument('--decrypt', type=bool, default=False, required=False)
+parser.add_argument('--set-salt', action='store_true')
+parser.add_argument('--decrypt', action='store_true')
 parser.add_argument('--encryptionkey', type=str, required=False)
 args = parser.parse_args()
 
-if args.password is None:
+if args.password is None and not args.decrypt:
     password = getpass.getpass(prompt="Enter password: ")
 else:
     password = args.password
 
 if args.encryptionkey is None:
-    encrypt_pwd = getpass.getpass(prompt="Enter encryptionkey: ")
+    encryption_key_ascii = getpass.getpass(prompt="Enter encryptionkey: ")
 else:
-    encrypt_pwd = args.encryptionkey
+    encryption_key_ascii = args.encryptionkey
 
-if args.salt:
+if args.set_salt:
     salt_ascii = getpass.getpass(prompt="Enter salt: ")
-    salt = str.encode(salt_ascii)
+    salt_bytes = str.encode(salt_ascii)
+
 else:
-    salt = default_salt
+    salt_bytes = default_salt
 
 if args.decrypt:
     # get token as base64 and convert it to byte
     token_ascii = input("Enter token: ")
     token_bytes = base64.b64decode(token_ascii)
+    encryption_key_bytes = str.encode(encryption_key_ascii)
 
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
-        salt=salt,
+        salt=salt_bytes,
         iterations=390000,
     )
-    key = base64.urlsafe_b64encode(kdf.derive(encrypt_key_bytes))
+    key = base64.urlsafe_b64encode(kdf.derive(encryption_key_bytes))
 
     f = Fernet(key)
     try:
-        print ("decrypted: %s" % f.decrypt(token_bytes))
+        print("decrypted: %s" % f.decrypt(token_bytes))
     except Exception as e:
         print("Wrong encryption key or salt %s" % e)
 
 else:
     password_bytes = str.encode(password)
-    encrypt_pwd_bytes = str.encode(encrypt_pwd)
+    encrypt_pwd_bytes = str.encode(encryption_key_ascii)
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
-        salt=salt,
+        salt=salt_bytes,
         iterations=390000,
     )
     key = base64.urlsafe_b64encode(kdf.derive(encrypt_pwd_bytes))

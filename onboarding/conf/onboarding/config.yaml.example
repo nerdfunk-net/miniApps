@@ -20,9 +20,9 @@ accounts:
         # profile name
         default:
             # username to login to devices
-            username: username
+            username: __username__
             # encrypted and base64 encodes password
-            password: "your encrypted password here"
+            password: "__password__"
 
 onboarding:
   logging:
@@ -38,9 +38,13 @@ onboarding:
     interface:
       - Loopback0
       - Loopback100
+      - mgmt0
+      - Vlan10
   tags:
     interfaces:
       # to set a tag configure tag name and regular expression here
       ospf: "^ ip ospf"
       dhcp: "^ ip address dhcp"
+      hsrp: "^ standby version 2"
+      portfast: "^ spanning-tree portfast"
 
