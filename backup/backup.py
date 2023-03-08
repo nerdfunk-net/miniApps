@@ -258,19 +258,11 @@ if __name__ == "__main__":
     username, password = get_username_and_password(args)
 
     if args.devices is not None:
-        if 'cidr' in args.devices:
-            devices = dm.get_devices(backup_config["sot"]["api_endpoint"], args.devices)
-            for device in devices["result"]["ip_addresses"]:
-                device_list.append({'host_ip': device["primary_ip4_for"]["primary_ip4"]["address"].split("/")[0],
-                                    'hostname': device["primary_ip4_for"]["hostname"],
-                                    'platform': device["primary_ip4_for"]["platform"]["slug"]})
-        else:
-            devices = dm.get_devices(backup_config["sot"]["api_endpoint"], args.devices)
-            for device in devices["result"]["devices"]:
-                device_list.append({'host_ip': device["primary_ip4"]["address"].split("/")[0],
-                                    'hostname': device["hostname"],
-                                    'platform': device["platform"]["slug"]})
-
+        devices = dm.get_devices(backup_config["sot"]["api_endpoint"], args.devices)
+        for device in devices["result"]:
+            device_list.append({'host_ip': device["primary_ip4"],
+                                'hostname': device["hostname"],
+                                'platform': device["platform"]["slug"]})
 
     # print(json.dumps(device_list, indent=4))
 

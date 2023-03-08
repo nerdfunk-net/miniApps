@@ -57,8 +57,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     # what to do
-    parser.add_argument('--device', type=str, required=False)
-    parser.add_argument('--filter', type=str, required=False)
+    parser.add_argument('--devices', type=str, required=False)
     # where to save
     parser.add_argument('--repo', type=str, required=False)
     # the user can enter a different config file
@@ -109,13 +108,12 @@ if __name__ == "__main__":
     # get username and password
     username, password = get_username_and_password(args)
 
-    if args.filter is not None:
-        filter = "/?%s" % args.filter
-    else:
-        filter = ""
-    devices = dm.get_devices(skeleton_config["sot"]["api_endpoint"], filter)
     device_list =[]
-    for device in devices["devices"]:
-        device_list.append(device["primary_ip4"]["address"].split("/")[0])
+    if args.devices is not None:
+        devices = dm.get_devices(skeleton_config["sot"]["api_endpoint"], args.devices)
+        for device in devices["result"]:
+            device_list.append({'host_ip': device["primary_ip4"],
+                                'hostname': device["hostname"],
+                                'platform': device["platform"]["slug"]})
 
-    print(device_list)
+    print(json.dumps(device_list,indent=4))
